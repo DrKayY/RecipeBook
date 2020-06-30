@@ -7,4 +7,9 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'recipe-course';
+  compt = 'recipes';
+
+  triggerComponent(com: string){
+    this.compt = com;
+  }
 }

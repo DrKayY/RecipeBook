@@ -1,5 +1,5 @@
 {
-    "editor.fontSize": 11,
+    "editor.fontSize": 12,
     "workbench.colorCustomizations": {
         "editorError.foreground": "#ff0000",
         "editorWarning.foreground": "#CEFA05"
