@@ -9,7 +9,7 @@ export class AppComponent {
   title = 'recipe-course';
   compt = 'recipes';
 
-  triggerComponent(com: string){
-    this.compt = com;
-  }
+  // triggerComponent(com: string){
+  //   this.compt = com;
+  // }
 }

@@ -7,7 +7,7 @@ import { Ingredient } from './shared/ingredient.model';
 //   providedIn: 'root'
 // })
 export class RecipeService {
-  selectRecipeEvent = new EventEmitter<Recipe>();
+  // selectRecipeEvent = new EventEmitter<Recipe>();
   private recipes: Recipe[] = [
     new Recipe('Test Recipe1',
     'Description1',
@@ -28,6 +28,14 @@ export class RecipeService {
   constructor() { }
   getRecipes() {
     return this.recipes.slice();
+  }
+
+  // getRecipe(name: string) {
+  //   return this.recipes.find(recipe => recipe.name === name);
+  // }
+
+  getRecipe(id: number) {
+    return this.recipes[id];
   }
 
 }

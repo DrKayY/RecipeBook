@@ -6,7 +6,7 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-  @Output() featureClicked = new EventEmitter();
+  // @Output() featureClicked = new EventEmitter();
   // @Output() shoppingListClicked = new EventEmitter();
 
   constructor() { }
@@ -14,9 +14,9 @@ export class HeaderComponent implements OnInit {
   ngOnInit() {
   }
 
-  onRecipeClicked(feature: string){
-    this.featureClicked.emit(feature);
-  }
+  // onRecipeClicked(feature: string){
+  //   this.featureClicked.emit(feature);
+  // }
 
   // noShoppingListClicked(){
   //   this.shoppingListClicked.emit('shoppingList');
