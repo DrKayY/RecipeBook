@@ -14,7 +14,7 @@ import { RecipeService } from '../recipe.service';
 export class RecipeDetailComponent implements OnInit {
   // @Input() recipe: Recipe;
   recipe: Recipe;
-  // id: number;
+  id: number;
 
   constructor(private shoppingListService: ShoppingListService,
               private recipesService: RecipeService,
@@ -25,7 +25,9 @@ export class RecipeDetailComponent implements OnInit {
     this.route.params.subscribe(
       (params: Params) => {
         // tslint:disable-next-line: no-string-literal
-        this.recipe = this.recipesService.getRecipe(+params['id']);
+        // this.recipe = this.recipesService.getRecipe(+params['id']);
+        this.id = +params.id;
+        this.recipe = this.recipesService.getRecipe(+params.id);
         // tslint:disable-next-line: no-string-literal
         // this.id = +params['id'];
       }
@@ -34,6 +36,11 @@ export class RecipeDetailComponent implements OnInit {
 
   toEditRecipe() {
     this.router.navigate(['edit'], {relativeTo: this.route});
+  }
+
+  toDeleteRecipe() {
+    this.recipesService.deleteRecipe(this.id);
+    this.router.navigate(['/recipes']);
   }
 
   onAddToShoppingList(ingredients: Ingredient[]) {

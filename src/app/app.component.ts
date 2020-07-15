@@ -6,8 +6,8 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'recipe-course';
-  compt = 'recipes';
+  // title = 'recipe-course';
+  // compt = 'recipes';
 
   // triggerComponent(com: string){
   //   this.compt = com;
