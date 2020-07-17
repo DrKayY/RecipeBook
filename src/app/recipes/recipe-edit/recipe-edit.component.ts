@@ -3,6 +3,7 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
 
 import { RecipeService } from '../recipe.service';
+import { exit } from 'process';
 
 @Component({
   selector: 'app-recipe-edit',
@@ -35,6 +36,10 @@ export class RecipeEditComponent implements OnInit {
     let recipeIngredients = new FormArray([]);
 
     if (this.editMode) {
+      // if (this.id > (this.recipeService.getRecipesNumber() - 1)) {
+      //   alert('not found');
+      //   this.router.navigate(['/recipes']);
+      // }
       const recipe = this.recipeService.getRecipe(this.id);
       recipeName = recipe.name;
       recipeImagePath = recipe.imagePath;
