@@ -1,17 +1,18 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { map, tap } from 'rxjs/operators';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { map, tap, take, exhaustMap } from 'rxjs/operators';
 
 import { RecipeService } from '../recipe.service';
 import { Recipe } from '../recipe.model';
 import { from } from 'rxjs';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FirebaseDataService {
 
-constructor(private http: HttpClient, private recipeService: RecipeService) { }
+constructor(private http: HttpClient, private recipeService: RecipeService, private authService: AuthService) { }
   // recipes: Recipe[]
 
   saveData() {

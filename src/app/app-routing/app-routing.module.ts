@@ -8,10 +8,14 @@ import { RecipeStartComponent } from '../recipes/recipe-start/recipe-start.compo
 import { RecipeEditComponent } from '../recipes/recipe-edit/recipe-edit.component';
 import { ProjectFormComponent } from '../project-form/project-form.component';
 import { RecipesResolverService } from '../recipes/recipes-resolver.service';
+import { AuthComponent } from '../auth/auth.component';
+import { AuthGuardGuard } from '../auth/auth-guard.guard';
 
 const appRoutes: Routes = [
   { path: '', redirectTo: '/recipes', pathMatch: 'full' },
-  { path: 'recipes', component: RecipesComponent, children: [
+  { path: 'recipes', component: RecipesComponent,
+    canActivate: [AuthGuardGuard],
+    children: [
     { path: '', component: RecipeStartComponent },
     { path: 'new', component: RecipeEditComponent },
     { path: ':id', component: RecipeDetailComponent, resolve: [RecipesResolverService] },
@@ -19,6 +23,7 @@ const appRoutes: Routes = [
   ] },
   { path: 'shopping-list', component: ShoppingListComponent },
   { path: 'form', component: ProjectFormComponent },
+  { path: 'auth', component: AuthComponent },
   { path: '**', redirectTo: '' },
 ];
 

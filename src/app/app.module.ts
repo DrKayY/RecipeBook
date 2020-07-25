@@ -17,6 +17,9 @@ import { RecipeStartComponent } from './recipes/recipe-start/recipe-start.compon
 import { RecipeEditComponent } from './recipes/recipe-edit/recipe-edit.component';
 import { ProjectFormComponent } from './project-form/project-form.component';
 import { LoggingInterceptorService } from './_services/logging-interceptor.service';
+import { AuthComponent } from './auth/auth.component';
+import { LoadingSpinnerComponent } from './recipes/shared/loading-spinner/loading-spinner.component';
+import { AuthInterceptorService } from './auth/auth-interceptor.service';
 
 @NgModule({
    declarations: [
@@ -31,7 +34,9 @@ import { LoggingInterceptorService } from './_services/logging-interceptor.servi
       DropdownDirective,
       RecipeStartComponent,
       RecipeEditComponent,
-      ProjectFormComponent
+      ProjectFormComponent,
+      AuthComponent,
+      LoadingSpinnerComponent
    ],
    imports: [
       BrowserModule,
@@ -41,7 +46,12 @@ import { LoggingInterceptorService } from './_services/logging-interceptor.servi
       HttpClientModule
    ],
    providers: [
-      // {
+      {
+         provide: HTTP_INTERCEPTORS,
+         useClass: AuthInterceptorService,
+         multi: true
+      }
+     // {
       //    provide: HTTP_INTERCEPTORS,
       //    useClass: LoggingInterceptorService,
       //    multi: true
