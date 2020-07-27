@@ -3,9 +3,10 @@
     <div *ngIf="loading" style="text-align: center;">
       <app-loading-spinner></app-loading-spinner>
     </div>
-    <div class="alert alert-danger" *ngIf="error">
+    <!-- <div class="alert alert-danger" *ngIf="error">
       <p>{{ error }}</p>
-    </div>
+    </div> -->
+    <app-alert [message]="error" (isClosed)="onHandleError()" *ngIf="error"></app-alert>
     <form #authForm="ngForm" (ngSubmit)="onSubmit(authForm)" *ngIf="!loading">
       <div class="form-group">
         <label for="email">Email</label>
