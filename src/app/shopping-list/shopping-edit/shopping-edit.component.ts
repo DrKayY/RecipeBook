@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, EventEmitter, Output, OnDestroy } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
-import { Ingredient } from 'src/app/recipes/shared/ingredient.model';
+import { Ingredient } from 'src/app/shared/ingredient.model';
 import { ShoppingListService } from '../shoppingList.service';
 import { Subscription } from 'rxjs';
 

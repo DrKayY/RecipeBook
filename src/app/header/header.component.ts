@@ -1,7 +1,7 @@
 import { Component, OnInit, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 
-import { FirebaseDataService } from '../recipes/shared/firebase-data.service';
+import { FirebaseDataService } from '../shared/firebase-data.service';
 import { AuthService } from '../auth/auth.service';
 
 @Component({
