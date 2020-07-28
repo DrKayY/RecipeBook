@@ -3,17 +3,19 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
 
 import { RecipeService } from '../recipe.service';
-import { exit } from 'process';
+import { CanComponentDeactivateGuard } from 'src/app/_services/can-component-deactivate.guard';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-recipe-edit',
   templateUrl: './recipe-edit.component.html',
   styleUrls: ['./recipe-edit.component.css']
 })
-export class RecipeEditComponent implements OnInit {
+export class RecipeEditComponent implements OnInit, CanComponentDeactivateGuard {
   id: number;
   editMode = false;
   recipeForm: FormGroup;
+  changesSaved = false;
 
   constructor(private route: ActivatedRoute, private recipeService: RecipeService, private router: Router) { }
 
@@ -75,6 +77,7 @@ export class RecipeEditComponent implements OnInit {
     } else {
       this.recipeService.addRecipe(this.recipeForm.value);
     }
+    this.changesSaved = true;
     this.router.navigate(['../'], {relativeTo: this.route});
   }
 
@@ -92,5 +95,13 @@ export class RecipeEditComponent implements OnInit {
   onRemoveIngredient(index: number) {
     (this.recipeForm.get('ingredients') as FormArray).removeAt(index);
     // (this.recipeForm.get('ingredients') as FormArray).clear();
+  }
+
+  canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
+    if (this.recipeForm.dirty && !this.changesSaved) {
+      return confirm('There are unsaved changes, are you sure you are done?');
+    } else {
+      return true;
+    }
   }
 }

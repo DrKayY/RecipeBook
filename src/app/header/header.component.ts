@@ -36,7 +36,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   // }
 
   onSaveData() {
-    this.firebaseDataService.saveData();
+    if (confirm('Are you sure?')) {
+      this.firebaseDataService.saveData();
+    } else {
+      return;
+    }
   }
 
   onFetchData() {
@@ -44,6 +48,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   onLogout() {
-    this.authService.logout();
+    if (confirm('Are you sure?')) {
+      this.authService.logout();
+    } else {
+      return;
+    }
   }
 }

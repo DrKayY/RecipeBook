@@ -4,7 +4,6 @@ import { map, tap, take, exhaustMap } from 'rxjs/operators';
 
 import { RecipeService } from '../recipes/recipe.service';
 import { Recipe } from '../recipes/recipe.model';
-import { from } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
 
 @Injectable({

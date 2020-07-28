@@ -39,8 +39,12 @@ export class RecipeDetailComponent implements OnInit {
   }
 
   toDeleteRecipe() {
-    this.recipesService.deleteRecipe(this.id);
-    this.router.navigate(['/recipes']);
+    if (confirm('Confirm delete')) {
+      this.recipesService.deleteRecipe(this.id);
+      this.router.navigate(['/recipes']);
+    } else {
+      return;
+    }
   }
 
   onAddToShoppingList(ingredients: Ingredient[]) {
