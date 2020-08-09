@@ -1,8 +1,12 @@
-import { Component, OnInit, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
 
 import { FirebaseDataService } from '../shared/firebase-data.service';
 import { AuthService } from '../auth/auth.service';
+import * as fromApp from '../Store/app.reducer';
+import * as AuthActions from '../auth/Store/auth.actions';
 
 @Component({
   selector: 'app-header',
@@ -10,30 +14,22 @@ import { AuthService } from '../auth/auth.service';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit, OnDestroy {
-  // @Output() featureClicked = new EventEmitter();
-  // @Output() shoppingListClicked = new EventEmitter();
   isAuthenticated = false;
   userSubs: Subscription;
 
-  constructor(private firebaseDataService: FirebaseDataService, private authService: AuthService) { }
+  constructor(private firebaseDataService: FirebaseDataService,
+              private authService: AuthService,
+              private store: Store<fromApp.AppState>) { }
 
   ngOnDestroy(): void {
     this.userSubs.unsubscribe();
   }
 
   ngOnInit() {
-    this.userSubs = this.authService.user.subscribe(userData => {
+    this.userSubs = this.store.select('auth').pipe(map(authState => authState.user)).subscribe(userData => {
       this.isAuthenticated = !!userData;
     });
   }
-
-  // onRecipeClicked(feature: string){
-  //   this.featureClicked.emit(feature);
-  // }
-
-  // noShoppingListClicked(){
-  //   this.shoppingListClicked.emit('shoppingList');
-  // }
 
   onSaveData() {
     if (confirm('Are you sure?')) {
@@ -49,7 +45,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   onLogout() {
     if (confirm('Are you sure?')) {
-      this.authService.logout();
+      this.store.dispatch(new AuthActions.Logout());
     } else {
       return;
     }

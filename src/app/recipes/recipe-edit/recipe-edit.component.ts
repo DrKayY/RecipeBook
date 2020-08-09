@@ -16,6 +16,7 @@ export class RecipeEditComponent implements OnInit, CanComponentDeactivateGuard 
   editMode = false;
   recipeForm: FormGroup;
   changesSaved = false;
+  formArrayLength: number;
 
   constructor(private route: ActivatedRoute, private recipeService: RecipeService, private router: Router) { }
 
@@ -26,6 +27,7 @@ export class RecipeEditComponent implements OnInit, CanComponentDeactivateGuard 
         // tslint:disable-next-line: no-string-literal
         this.editMode = params['id'] != null;
         this.initForm();
+        this.formArrayLength = (this.recipeForm.get('ingredients') as FormArray).length;
       }
     );
   }
@@ -38,10 +40,6 @@ export class RecipeEditComponent implements OnInit, CanComponentDeactivateGuard 
     let recipeIngredients = new FormArray([]);
 
     if (this.editMode) {
-      // if (this.id > (this.recipeService.getRecipesNumber() - 1)) {
-      //   alert('not found');
-      //   this.router.navigate(['/recipes']);
-      // }
       const recipe = this.recipeService.getRecipe(this.id);
       recipeName = recipe.name;
       recipeImagePath = recipe.imagePath;
@@ -98,7 +96,8 @@ export class RecipeEditComponent implements OnInit, CanComponentDeactivateGuard 
   }
 
   canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
-    if (this.recipeForm.dirty && !this.changesSaved) {
+    const formArrayLength = (this.recipeForm.get('ingredients') as FormArray).length;
+    if ((this.recipeForm.dirty || formArrayLength !== this.formArrayLength) && !this.changesSaved) {
       return confirm('There are unsaved changes, are you sure you are done?');
     } else {
       return true;
