@@ -1,1 +1,4 @@
-<h3>Please select a recipe</h3>
+<h3 *ngIf="recipesPresent; else fetchRecipes">Please select a recipe</h3>
+<ng-template #fetchRecipes>
+    <h3>No recipes, add a new recipe or fetch recipes from store</h3>
+</ng-template>

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Actions, ofType, Effect } from '@ngrx/effects';
 import { switchMap, catchError, map, tap } from 'rxjs/operators';
-import { HttpClient } from '@angular/common/http';
 import { of } from 'rxjs';
 
 import * as AuthActions from './auth.actions';
@@ -29,7 +29,8 @@ const handleAuthentication = (resData: FirebaseAuthRes) => {
             email: resData.email,
             id: resData.idToken,
             token: resData.idToken,
-            expirationDate
+            expirationDate,
+            redirect: true
         });
   };
 
@@ -116,7 +117,8 @@ export class AuthEffects {
                     email: loadedUser.email,
                     id: loadedUser.id,
                     token: loadedUser.token,
-                    expirationDate: new Date(userData._expirationDate)
+                    expirationDate: new Date(userData._expirationDate),
+                    redirect: false
                 });
             }
             return { type: 'DUMMY' };
@@ -126,8 +128,10 @@ export class AuthEffects {
     @Effect({ dispatch: false })
     authRedirect = this.actions$.pipe(
         ofType(AuthActions.AUTH_SUCCESS),
-        tap(() => {
-            this.router.navigate(['/']);
+        tap((authSuccessAction: AuthActions.AuthSuccess) => {
+            if (authSuccessAction.payload.redirect) {
+                this.router.navigate(['/']);
+            }
         })
     );
 

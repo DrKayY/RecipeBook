@@ -3,10 +3,9 @@ import { Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 
-import { FirebaseDataService } from '../shared/firebase-data.service';
-import { AuthService } from '../auth/auth.service';
 import * as fromApp from '../Store/app.reducer';
 import * as AuthActions from '../auth/Store/auth.actions';
+import * as RecipesActions from '../recipes/store/recipes.action';
 
 @Component({
   selector: 'app-header',
@@ -17,9 +16,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isAuthenticated = false;
   userSubs: Subscription;
 
-  constructor(private firebaseDataService: FirebaseDataService,
-              private authService: AuthService,
-              private store: Store<fromApp.AppState>) { }
+  constructor(private store: Store<fromApp.AppState>) { }
 
   ngOnDestroy(): void {
     this.userSubs.unsubscribe();
@@ -33,14 +30,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   onSaveData() {
     if (confirm('Are you sure?')) {
-      this.firebaseDataService.saveData();
+      this.store.dispatch(new RecipesActions.StoreRecipes());
     } else {
       return;
     }
   }
 
   onFetchData() {
-    this.firebaseDataService.fetchData().subscribe();
+    this.store.dispatch(new RecipesActions.FetchRecipes());
   }
 
   onLogout() {

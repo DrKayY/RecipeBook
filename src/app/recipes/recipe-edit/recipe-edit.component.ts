@@ -1,31 +1,42 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
+import { Observable, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
 
-import { RecipeService } from '../recipe.service';
 import { CanComponentDeactivateGuard } from 'src/app/_services/can-component-deactivate.guard';
-import { Observable } from 'rxjs';
+import * as fromApp from '../../Store/app.reducer';
+import * as RecipesActions from '../store/recipes.action';
 
 @Component({
   selector: 'app-recipe-edit',
   templateUrl: './recipe-edit.component.html',
   styleUrls: ['./recipe-edit.component.css']
 })
-export class RecipeEditComponent implements OnInit, CanComponentDeactivateGuard {
+export class RecipeEditComponent implements OnInit, CanComponentDeactivateGuard, OnDestroy {
   id: number;
   editMode = false;
   recipeForm: FormGroup;
   changesSaved = false;
   formArrayLength: number;
+  storeSubscription: Subscription;
 
-  constructor(private route: ActivatedRoute, private recipeService: RecipeService, private router: Router) { }
+  constructor(private route: ActivatedRoute,
+              private router: Router,
+              private store: Store<fromApp.AppState>) { }
+
+  ngOnDestroy(): void {
+    if (this.storeSubscription) {
+      this.storeSubscription.unsubscribe();
+    }
+  }
 
   ngOnInit(): void {
     this.route.params.subscribe(
       (params: Params) => {
         this.id = +params.id;
-        // tslint:disable-next-line: no-string-literal
-        this.editMode = params['id'] != null;
+        this.editMode = params.id != null;
         this.initForm();
         this.formArrayLength = (this.recipeForm.get('ingredients') as FormArray).length;
       }
@@ -40,21 +51,28 @@ export class RecipeEditComponent implements OnInit, CanComponentDeactivateGuard 
     let recipeIngredients = new FormArray([]);
 
     if (this.editMode) {
-      const recipe = this.recipeService.getRecipe(this.id);
-      recipeName = recipe.name;
-      recipeImagePath = recipe.imagePath;
-      recipeDescription = recipe.description;
-      if (recipe.ingredients) {
-        // tslint:disable-next-line: prefer-const
-        for (let ing of recipe.ingredients) {
-          recipeIngredients.push(
-            new FormGroup({
-              name: new FormControl(ing.name, Validators.required),
-              amount: new FormControl(ing.amount, [Validators.required, Validators.pattern(/^[1-9]+[0-9]*$/)])
-            })
-          );
-        }
-      }
+      this.storeSubscription = this.store.select('recipes').pipe(
+        map(recipesState => {
+          return recipesState.recipes.find((recipe, index) => {
+            return index === this.id;
+          });
+        }))
+        .subscribe(recipe => {
+          recipeName = recipe.name;
+          recipeImagePath = recipe.imagePath;
+          recipeDescription = recipe.description;
+          if (recipe.ingredients) {
+            // tslint:disable-next-line: prefer-const
+            for (let ing of recipe.ingredients) {
+              recipeIngredients.push(
+                new FormGroup({
+                  name: new FormControl(ing.name, Validators.required),
+                  amount: new FormControl(ing.amount, [Validators.required, Validators.pattern(/^[1-9]+[0-9]*$/)])
+                })
+              );
+            }
+          }
+        });
     }
 
     this.recipeForm = new FormGroup({
@@ -71,13 +89,13 @@ export class RecipeEditComponent implements OnInit, CanComponentDeactivateGuard 
 
   onSubmit() {
     if (this.editMode) {
-      this.recipeService.updateRecipe(this.id, this.recipeForm.value);
+      this.store.dispatch(new RecipesActions.UpdateRecipe({ id: this.id, newRecipe: this.recipeForm.value }));
     } else {
-      this.recipeService.addRecipe(this.recipeForm.value);
+      this.store.dispatch(new RecipesActions.AddRecipe(this.recipeForm.value));
     }
     this.changesSaved = true;
     this.router.navigate(['../'], {relativeTo: this.route});
-  }
+}
 
   onCancel() {
     this.router.navigate(['../'], {relativeTo: this.route});
@@ -92,7 +110,6 @@ export class RecipeEditComponent implements OnInit, CanComponentDeactivateGuard 
 
   onRemoveIngredient(index: number) {
     (this.recipeForm.get('ingredients') as FormArray).removeAt(index);
-    // (this.recipeForm.get('ingredients') as FormArray).clear();
   }
 
   canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
